@@ -1,0 +1,208 @@
+/* 纪念页生成器 - 主题变量（思源宋体 / 庄重配色） */
+:root {
+  --color-bg: #f8f6f2;
+  --color-card: #fffefb;
+  --color-text: #3d3d3d;
+  --color-muted: #6b6b6b;
+  --color-accent: #7a9eb8;
+  --color-border: #e0ddd6;
+  --font-serif: 'Noto Serif SC', 'Source Han Serif SC', SimSun, serif;
+}
+
+/* 纪念页整体背景（包一层以免影响其他页面） */
+.memorial-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-serif);
+}
+
+/* 纪念页生成器 - 变量与布局 */
+.memorial-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--color-muted, #6b6b6b);
+}
+
+.memorial-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+
+  .form-panel,
+  .preview-panel {
+    background: var(--color-card, #fffefb);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--color-border, #e0ddd6);
+  }
+
+  .preview-panel {
+    position: sticky;
+    top: 24px;
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+  }
+
+  .form-title,
+  .preview-title {
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--color-text, #3d3d3d);
+    font-size: 18px;
+  }
+
+  &__title {
+    font-size: 22px;
+    margin-bottom: 8px;
+    color: var(--color-text, #3d3d3d);
+  }
+
+  &__order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__order-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__order-label {
+    color: #666;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ql-container {
+    font-family: var(--font-serif, serif);
+    min-height: 120px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+/* 纪念卡展示（与最终纪念页一致） */
+.memorial-card {
+  font-family: var(--font-serif, serif);
+  color: var(--color-text, #3d3d3d);
+  padding: 20px 0;
+
+  .name {
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+
+  .dates {
+    text-align: center;
+    color: var(--color-muted, #6b6b6b);
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .bio {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--color-text, #3d3d3d);
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+    }
+  }
+
+  .photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+
+    img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+}
+
+/* 预览页（纪念页 + 二维码） */
+.memorial-preview-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  padding-right: 200px;
+  min-height: 100vh;
+  background: var(--color-card, #fffefb);
+  position: relative;
+
+  @media (max-width: 600px) {
+    padding-right: 24px;
+
+    .qr-area {
+      position: static;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__back {
+    margin-bottom: 16px;
+  }
+
+  .scan-hint {
+    text-align: center;
+    color: var(--color-muted, #6b6b6b);
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+
+  .qr-area {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    text-align: center;
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+
+    .save-qr-btn {
+      margin-top: 12px;
+      width: 100%;
+    }
+  }
+}
