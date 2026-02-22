@@ -5,6 +5,7 @@ import { MemorialCard } from './MemorialCard';
 import { RichTextEditor } from './RichTextEditor';
 import { readFileAsDataURL } from './utils';
 import { ossConfig } from './ossConfig';
+import { uploadMemorial } from './ossUpload';
 import { SIMULATE_PREFIX } from './constants';
 import type { MemorialCardData } from './types';
 
@@ -61,8 +62,25 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({
     }
     setSubmitting(true);
     try {
-      // const id = 'memorial_' + Date.now(); // OSS 实现时用于 JSON/照片路径
-      message.info('OSS 未实现上传逻辑，请配置并实现上传后重试');
+      const id = 'memorial_' + Date.now();
+      const formValues = form.getFieldsValue();
+      const photoFiles: File[] = [];
+      for (const f of fileList) {
+        const file = f.originFileObj ?? (f as unknown as File);
+        if (file && file instanceof File) photoFiles.push(file);
+      }
+      await uploadMemorial(id, {
+        name: formValues.name,
+        birthDate: toTimestamp(formValues.birthDate),
+        deathDate: toTimestamp(formValues.deathDate),
+        biography: bioHtml ?? '',
+        photoFiles,
+      });
+      message.success('纪念页已生成');
+      onGenerate(id);
+    } catch (e) {
+      console.error('OSS 上传失败', e);
+      message.error(e instanceof Error ? e.message : '上传失败，请检查 OSS 配置与网络');
     } finally {
       setSubmitting(false);
     }

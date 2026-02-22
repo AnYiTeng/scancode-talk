@@ -1,23 +1,26 @@
 /**
- * ========== 请替换为您的阿里云 OSS 配置 ==========
- * 使用方式：STS 临时授权 或 服务端签名后前端直传。
- * 数据命名规则：
- *   - 表单 JSON：memorial_{timestamp}.json
- *   - 照片目录：memorial_{timestamp}/photo_1.jpg, photo_2.jpg ...
- * 未配置时可使用「模拟生成」在本地测试。
+ * 阿里云 OSS 配置
+ * 密钥请写在 .env.local 中（已加入 .gitignore），不要提交到仓库：
+ *   REACT_APP_OSS_ACCESS_KEY_ID=你的AccessKeyId
+ *   REACT_APP_OSS_ACCESS_KEY_SECRET=你的AccessKeySecret
  */
 export interface OSSConfig {
   region?: string;
   bucket?: string;
   accessKeyId?: string;
+  accessKeySecret?: string;
+  publicBaseUrl?: string;
   isConfigured: boolean;
 }
 
+const accessKeyId = process.env.REACT_APP_OSS_ACCESS_KEY_ID;
+const accessKeySecret = process.env.REACT_APP_OSS_ACCESS_KEY_SECRET;
+
 export const ossConfig: OSSConfig = {
-  // region: 'oss-cn-hangzhou',   // 请替换为您的 Region
-  // bucket: 'your-bucket-name',  // 请替换为您的 Bucket
-  // accessKeyId: '您的 AccessKey ID',
-  // 若使用 STS：stsToken、accessKeySecret 由后端接口返回，不要写在前端
-  // 若使用签名 URL：由后端生成 put 签名 URL，前端 put 上传
-  isConfigured: false,
+  region: 'oss-cn-beijing',
+  bucket: 'memorial-an',
+  accessKeyId: accessKeyId || undefined,
+  accessKeySecret: accessKeySecret || undefined,
+  publicBaseUrl: 'https://memorial-an.oss-cn-beijing.aliyuncs.com',
+  isConfigured: Boolean(accessKeyId && accessKeySecret),
 };

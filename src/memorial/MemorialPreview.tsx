@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button, Spin } from 'antd';
 import { QRCodeCanvas } from 'qrcode.react';
 import { MemorialCard } from './MemorialCard';
+import { ossConfig } from './ossConfig';
 import { SIMULATE_PREFIX, QR_SIZE, QR_DOWNLOAD_SIZE } from './constants';
 import type { MemorialData, MemorialCardData } from './types';
 
@@ -23,18 +24,40 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
 
   useEffect(() => {
     let cancelled = false;
-    const raw = window.localStorage.getItem(SIMULATE_PREFIX + id);
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw) as MemorialData;
-        if (!cancelled) setData(parsed);
-      } catch {
-        if (!cancelled) setError('数据解析失败');
+
+    const load = async () => {
+      const raw = window.localStorage.getItem(SIMULATE_PREFIX + id);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw) as MemorialData;
+          if (!cancelled) setData(parsed);
+        } catch {
+          if (!cancelled) setError('数据解析失败');
+        }
+        if (!cancelled) setLoading(false);
+        return;
       }
-    } else {
-      if (!cancelled) setError('未找到该纪念页数据');
-    }
-    if (!cancelled) setLoading(false);
+      const baseUrl = ossConfig.publicBaseUrl;
+      if (baseUrl) {
+        try {
+          const url = `${baseUrl.replace(/\/$/, '')}/${encodeURIComponent(id)}.json`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const parsed = (await res.json()) as MemorialData;
+            if (!cancelled) setData(parsed);
+          } else if (!cancelled) {
+            setError('未找到该纪念页数据');
+          }
+        } catch {
+          if (!cancelled) setError('未找到该纪念页数据');
+        }
+      } else {
+        if (!cancelled) setError('未找到该纪念页数据');
+      }
+      if (!cancelled) setLoading(false);
+    };
+
+    load();
     return () => {
       cancelled = true;
     };
