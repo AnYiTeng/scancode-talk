@@ -3,15 +3,12 @@ import { Form, Input, DatePicker, Button, Upload, message } from 'antd';
 import type { UploadFile } from 'antd';
 import { MemorialCard } from './MemorialCard';
 import { RichTextEditor } from './RichTextEditor';
-import { readFileAsDataURL } from './utils';
 import { ossConfig } from './ossConfig';
 import { uploadMemorial } from './ossUpload';
-import { SIMULATE_PREFIX } from './constants';
 import type { MemorialCardData } from './types';
 
 interface MemorialEditorProps {
   onGenerate: (id: string) => void;
-  onSimulate: (id: string) => void;
 }
 
 function normFile(e: { fileList?: UploadFile[] }) {
@@ -29,15 +26,11 @@ function toTimestamp(v: unknown): number | undefined {
   return undefined;
 }
 
-export const MemorialEditor: React.FC<MemorialEditorProps> = ({
-  onGenerate,
-  onSimulate,
-}) => {
+export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) => {
   const [form] = Form.useForm();
   const [bioHtml, setBioHtml] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [submitting, setSubmitting] = useState(false);
-  const [simulating, setSimulating] = useState(false);
 
   const values = Form.useWatch([], form) ?? {};
   const previewData: MemorialCardData = {
@@ -57,7 +50,7 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({
       return;
     }
     if (!ossConfig.isConfigured) {
-      message.warning('尚未配置 OSS，请使用「模拟生成」进行测试');
+      message.warning('请先配置 OSS（.env.local 中的 REACT_APP_OSS_*）');
       return;
     }
     setSubmitting(true);
@@ -83,55 +76,6 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({
       message.error(e instanceof Error ? e.message : '上传失败，请检查 OSS 配置与网络');
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleSimulate = async () => {
-    try {
-      await form.validateFields(['name']);
-    } catch {
-      return;
-    }
-    setSimulating(true);
-    try {
-      const id = 'memorial_' + Date.now();
-      const formValues = form.getFieldsValue();
-      const photoUrls: string[] = [];
-      for (let i = 0; i < fileList.length; i++) {
-        const f = fileList[i];
-        const file = f.originFileObj ?? (f as unknown as File);
-        if (file && file instanceof File) {
-          const dataUrl = await readFileAsDataURL(file);
-          photoUrls.push(dataUrl);
-        } else if (f.thumbUrl ?? f.url) {
-          photoUrls.push((f.thumbUrl ?? f.url) as string);
-        }
-      }
-      const payload = {
-        name: formValues.name,
-        birthDate: toTimestamp(formValues.birthDate),
-        deathDate: toTimestamp(formValues.deathDate),
-        biography: bioHtml ?? '',
-        photoUrls,
-      };
-      const json = JSON.stringify(payload);
-      const KEY = SIMULATE_PREFIX + id;
-      try {
-        window.localStorage.setItem(KEY, json);
-      } catch (storageErr) {
-        if (storageErr instanceof Error && storageErr.name === 'QuotaExceededError') {
-          message.error('数据过大（照片过多或过大），请减少照片后重试');
-        } else {
-          throw storageErr;
-        }
-        return;
-      }
-      onSimulate(id);
-    } catch (e) {
-      console.error('模拟生成失败', e);
-      message.error('模拟生成失败，请检查填写内容或稍后重试');
-    } finally {
-      setSimulating(false);
     }
   };
 
@@ -213,9 +157,6 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({
         <div className="memorial-editor__actions">
           <Button type="primary" onClick={handleGenerate} loading={submitting}>
             生成纪念页
-          </Button>
-          <Button onClick={handleSimulate} loading={simulating}>
-            模拟生成
           </Button>
         </div>
       </div>

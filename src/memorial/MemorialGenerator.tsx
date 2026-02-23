@@ -18,10 +18,6 @@ export const MemorialGenerator: React.FC = () => {
     setHash('/preview', 'id=' + encodeURIComponent(id));
   };
 
-  const handleSimulate = (id: string) => {
-    setHash('/preview', 'id=' + encodeURIComponent(id));
-  };
-
   if (!ready) {
     return (
       <div className="memorial-page">
@@ -46,7 +42,7 @@ export const MemorialGenerator: React.FC = () => {
 
   return (
     <div className="memorial-page">
-      <MemorialEditor onGenerate={handleGenerate} onSimulate={handleSimulate} />
+      <MemorialEditor onGenerate={handleGenerate} />
     </div>
   );
 };

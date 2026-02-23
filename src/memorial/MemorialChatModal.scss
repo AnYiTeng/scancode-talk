@@ -1,0 +1,92 @@
+.memorial-chat-modal {
+  .memorial-chat-modal__body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .memorial-chat-modal__messages {
+    min-height: 280px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 12px;
+    background: var(--color-bg, #f8f6f2);
+    border-radius: 8px;
+    border: 1px solid var(--color-border, #e0ddd6);
+  }
+
+  .memorial-chat-modal__placeholder {
+    color: var(--color-muted, #6b6b6b);
+    font-size: 14px;
+    text-align: center;
+    padding: 24px 16px;
+    line-height: 1.6;
+  }
+
+  .memorial-chat-modal__msg {
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .memorial-chat-modal__msg-role {
+    display: inline-block;
+    font-size: 12px;
+    color: var(--color-muted, #6b6b6b);
+    margin-bottom: 4px;
+  }
+
+  .memorial-chat-modal__msg-content {
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 8px 12px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+
+    &--streaming {
+      min-height: 1.6em;
+    }
+  }
+
+  .memorial-chat-modal__msg--user {
+    .memorial-chat-modal__msg-content {
+      background: var(--color-accent, #7a9eb8);
+      color: #fff;
+      margin-left: 24px;
+    }
+  }
+
+  .memorial-chat-modal__msg--assistant {
+    .memorial-chat-modal__msg-content {
+      background: var(--color-card, #fffefb);
+      border: 1px solid var(--color-border, #e0ddd6);
+      margin-right: 24px;
+    }
+  }
+
+  .memorial-chat-modal__error {
+    font-size: 13px;
+    color: #c41e3a;
+    padding: 8px 12px;
+    background: #fff1f0;
+    border-radius: 8px;
+    border: 1px solid #ffccc7;
+  }
+
+  .memorial-chat-modal__input-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+
+  .memorial-chat-modal__input {
+    flex: 1;
+  }
+
+  .memorial-chat-modal__send {
+    flex-shrink: 0;
+  }
+}

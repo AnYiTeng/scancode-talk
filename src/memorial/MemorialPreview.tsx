@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Button, Spin } from 'antd';
 import { QRCodeCanvas } from 'qrcode.react';
 import { MemorialCard } from './MemorialCard';
+import { MemorialChatModal } from './MemorialChatModal';
 import { ossConfig } from './ossConfig';
-import { SIMULATE_PREFIX, QR_SIZE, QR_DOWNLOAD_SIZE } from './constants';
+import { QR_SIZE, QR_DOWNLOAD_SIZE } from './constants';
 import type { MemorialData, MemorialCardData } from './types';
 
 interface MemorialPreviewProps {
@@ -14,6 +15,7 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
   const [data, setData] = useState<MemorialData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
   const previewUrl =
@@ -26,17 +28,6 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
     let cancelled = false;
 
     const load = async () => {
-      const raw = window.localStorage.getItem(SIMULATE_PREFIX + id);
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw) as MemorialData;
-          if (!cancelled) setData(parsed);
-        } catch {
-          if (!cancelled) setError('数据解析失败');
-        }
-        if (!cancelled) setLoading(false);
-        return;
-      }
       const baseUrl = ossConfig.publicBaseUrl;
       if (baseUrl) {
         try {
@@ -129,6 +120,18 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
         </Button>
       </div>
       <MemorialCard data={cardData} />
+      <div className="memorial-preview-page__chat">
+        <Button type="primary" size="large" onClick={() => setChatOpen(true)}>
+          与TA对话
+        </Button>
+      </div>
+      {data && (
+        <MemorialChatModal
+          visible={chatOpen}
+          onClose={() => setChatOpen(false)}
+          memorialData={data}
+        />
+      )}
     </div>
   );
 };
