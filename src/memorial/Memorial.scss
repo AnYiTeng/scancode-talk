@@ -338,6 +338,8 @@
     top: 24px;
     right: 24px;
     right: calc(24px + var(--safe-right));
+    width: 100%;
+    max-width: 200px; /* PC 端限制尺寸，避免二维码过大 */
     text-align: center;
     background: #fff;
     padding: 16px;
