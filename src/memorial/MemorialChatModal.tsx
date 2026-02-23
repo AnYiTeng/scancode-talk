@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Modal, Input, Button, message as antMessage } from 'antd';
+import { Input, Button, message as antMessage } from 'antd';
 import { buildSystemPrompt, sendChatStream, type ChatMessage } from './bailianChat';
 import type { MemorialData } from './types';
 import './MemorialChatModal.scss';
@@ -9,14 +9,10 @@ const { TextArea } = Input;
 const MAX_HISTORY = 10;
 
 interface MemorialChatModalProps {
-  visible: boolean;
-  onClose: () => void;
   memorialData: MemorialData;
 }
 
 export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
-  visible,
-  onClose,
   memorialData,
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -26,15 +22,6 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
   const [error, setError] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const systemPrompt = buildSystemPrompt(memorialData);
-
-  useEffect(() => {
-    if (visible) {
-      setMessages([]);
-      setStreamingContent('');
-      setInput('');
-      setError(null);
-    }
-  }, [visible]);
 
   useEffect(() => {
     if (listRef.current) {
@@ -76,18 +63,10 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
   };
 
   return (
-    <Modal
-      title={`与${memorialData.name ?? 'TA'}对话`}
-      open={visible}
-      onCancel={onClose}
-      footer={null}
-      width={520}
-      destroyOnClose
-      className="memorial-chat-modal"
-      afterOpenChange={(open) => {
-        if (!open) setError(null);
-      }}
-    >
+    <section className="memorial-chat-modal" aria-label={`与${memorialData.name ?? 'TA'}对话`}>
+      <h3 className="memorial-chat-modal__title">
+        与{memorialData.name ?? 'TA'}对话
+      </h3>
       <div className="memorial-chat-modal__body">
         <div className="memorial-chat-modal__messages" ref={listRef}>
           {messages.length === 0 && (
@@ -146,6 +125,6 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
           </Button>
         </div>
       </div>
-    </Modal>
+    </section>
   );
 };

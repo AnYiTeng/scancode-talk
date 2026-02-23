@@ -15,7 +15,6 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
   const [data, setData] = useState<MemorialData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [chatOpen, setChatOpen] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
 
   const previewUrl =
@@ -122,17 +121,8 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
         </Button>
       </div>
       <MemorialCard data={cardData} />
-      <div className="memorial-preview-page__chat">
-        <Button type="primary" size="large" onClick={() => setChatOpen(true)}>
-          与TA对话
-        </Button>
-      </div>
       {data && (
-        <MemorialChatModal
-          visible={chatOpen}
-          onClose={() => setChatOpen(false)}
-          memorialData={data}
-        />
+        <MemorialChatModal memorialData={data} />
       )}
     </div>
   );

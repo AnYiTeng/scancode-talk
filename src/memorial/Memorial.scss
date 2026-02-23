@@ -388,23 +388,4 @@
       max-width: 180px;
     }
   }
-
-  &__chat {
-    margin-top: 24px;
-    text-align: center;
-  }
-
-  @media (max-width: 480px) {
-    &__chat {
-      margin-top: 20px;
-    }
-
-    &__chat .ant-btn {
-      min-height: 48px;
-      padding: 10px 24px;
-      font-size: 16px;
-      width: 100%;
-      max-width: 280px;
-    }
-  }
 }
