@@ -108,13 +108,15 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
       </div>
       <div className="scan-hint">扫码访问</div>
       <div className="qr-area" ref={qrRef}>
-        <QRCodeCanvas
-          value={previewUrl}
-          size={QR_SIZE}
-          level="H"
-          bgColor="#ffffff"
-          fgColor="#000000"
-        />
+        <div className="qr-area__canvas-wrap">
+          <QRCodeCanvas
+            value={previewUrl}
+            size={QR_SIZE}
+            level="H"
+            bgColor="#ffffff"
+            fgColor="#000000"
+          />
+        </div>
         <Button className="save-qr-btn" onClick={handleSaveQr}>
           保存二维码
         </Button>

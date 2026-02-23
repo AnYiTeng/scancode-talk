@@ -7,11 +7,17 @@
   --color-accent: #7a9eb8;
   --color-border: #e0ddd6;
   --font-serif: 'Noto Serif SC', 'Source Han Serif SC', SimSun, serif;
+  --safe-top: env(safe-area-inset-top, 0);
+  --safe-bottom: env(safe-area-inset-bottom, 0);
+  --safe-left: env(safe-area-inset-left, 0);
+  --safe-right: env(safe-area-inset-right, 0);
 }
 
 /* 纪念页整体背景（包一层以免影响其他页面） */
 .memorial-page {
   min-height: 100vh;
+  min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+  padding-bottom: var(--safe-bottom);
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-serif);
@@ -23,6 +29,8 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  min-height: calc(100vh - var(--safe-top) - var(--safe-bottom));
+  padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
   flex-direction: column;
   gap: 16px;
   color: var(--color-muted, #6b6b6b);
@@ -34,11 +42,22 @@
   gap: 24px;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 24px calc(24px + var(--safe-right)) 24px calc(24px + var(--safe-left));
   min-height: 100vh;
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px;
+    padding-left: calc(16px + var(--safe-left));
+    padding-right: calc(16px + var(--safe-right));
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    padding-left: calc(12px + var(--safe-left));
+    padding-right: calc(12px + var(--safe-right));
+    gap: 12px;
   }
 
   .form-panel,
@@ -50,11 +69,26 @@
     border: 1px solid var(--color-border, #e0ddd6);
   }
 
+  @media (max-width: 480px) {
+    .form-panel,
+    .preview-panel {
+      padding: 16px;
+      border-radius: 10px;
+    }
+  }
+
   .preview-panel {
     position: sticky;
     top: 24px;
     max-height: calc(100vh - 48px);
     overflow: auto;
+  }
+
+  @media (max-width: 900px) {
+    .preview-panel {
+      position: static;
+      max-height: none;
+    }
   }
 
   .form-title,
@@ -65,10 +99,25 @@
     font-size: 18px;
   }
 
+  @media (max-width: 480px) {
+    .form-title,
+    .preview-title {
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+  }
+
   &__title {
     font-size: 22px;
     margin-bottom: 8px;
     color: var(--color-text, #3d3d3d);
+  }
+
+  @media (max-width: 480px) {
+    &__title {
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
   }
 
   &__order-list {
@@ -88,6 +137,14 @@
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    &__order-item .ant-btn {
+      min-height: 36px;
+      padding: 4px 12px;
+    }
   }
 
   &__actions {
@@ -96,13 +153,43 @@
     flex-wrap: wrap;
   }
 
+  @media (max-width: 480px) {
+    &__actions .ant-btn-primary {
+      min-height: 44px;
+      padding: 8px 20px;
+      font-size: 15px;
+      width: 100%;
+    }
+  }
+
   .ql-container {
     font-family: var(--font-serif, serif);
     min-height: 120px;
   }
 
+  @media (max-width: 480px) {
+    .ql-container {
+      min-height: 100px;
+    }
+  }
+
   .ant-form-item {
     margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .ant-form-item {
+      margin-bottom: 14px;
+    }
+    .ant-form-item .ant-input,
+    .ant-form-item .ant-picker {
+      min-height: 44px;
+      font-size: 16px; /* 避免 iOS 输入框 zoom */
+    }
+    .ant-upload.ant-upload-select {
+      width: 80px;
+      height: 80px;
+    }
   }
 }
 
@@ -153,6 +240,31 @@
       border-radius: 8px;
     }
   }
+
+  @media (max-width: 480px) {
+    padding: 12px 0;
+
+    .name {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .dates {
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .bio {
+      font-size: 13px;
+      line-height: 1.75;
+    }
+
+    .photos {
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+  }
 }
 
 /* 预览页（纪念页 + 二维码） */
@@ -161,21 +273,50 @@
   margin: 0 auto;
   padding: 24px;
   padding-right: 200px;
+  padding-left: calc(24px + var(--safe-left));
+  padding-right: calc(200px + var(--safe-right));
   min-height: 100vh;
   background: var(--color-card, #fffefb);
   position: relative;
 
-  @media (max-width: 600px) {
+  @media (max-width: 768px) {
     padding-right: 24px;
+    padding-right: calc(24px + var(--safe-right));
+  }
+
+  @media (max-width: 600px) {
+    padding: 16px;
+    padding-left: calc(16px + var(--safe-left));
+    padding-right: calc(16px + var(--safe-right));
 
     .qr-area {
       position: static;
       margin-bottom: 20px;
+      max-width: 220px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    padding-left: calc(12px + var(--safe-left));
+    padding-right: calc(12px + var(--safe-right));
+
+    .qr-area {
+      max-width: 180px;
+      padding: 12px;
     }
   }
 
   &__back {
     margin-bottom: 16px;
+  }
+
+  &__back .ant-btn {
+    min-height: 44px;
+    padding: 4px 0;
+    font-size: 15px;
   }
 
   .scan-hint {
@@ -185,29 +326,83 @@
     margin-bottom: 16px;
   }
 
+  @media (max-width: 480px) {
+    .scan-hint {
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+  }
+
   .qr-area {
     position: absolute;
     top: 24px;
     right: 24px;
+    right: calc(24px + var(--safe-right));
     text-align: center;
     background: #fff;
     padding: 16px;
     border-radius: 12px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  /* 方形容器保证二维码 1:1 比例，避免移动端拉伸变形 */
+  .qr-area__canvas-wrap {
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 
     canvas {
       display: block;
-      margin: 0 auto;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  .qr-area .save-qr-btn {
+    margin-top: 12px;
+    width: 100%;
+    min-height: 40px;
+  }
+
+  @media (max-width: 600px) {
+    .qr-area {
+      position: static;
+      right: auto;
     }
 
-    .save-qr-btn {
-      margin-top: 12px;
-      width: 100%;
+    .qr-area__canvas-wrap {
+      max-width: 220px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .qr-area__canvas-wrap {
+      max-width: 180px;
     }
   }
 
   &__chat {
     margin-top: 24px;
     text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    &__chat {
+      margin-top: 20px;
+    }
+
+    &__chat .ant-btn {
+      min-height: 48px;
+      padding: 10px 24px;
+      font-size: 16px;
+      width: 100%;
+      max-width: 280px;
+    }
   }
 }
