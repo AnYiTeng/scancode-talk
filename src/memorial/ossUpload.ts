@@ -28,11 +28,12 @@ function getFileExt(name: string): string {
 
 /**
  * 上传纪念页：先传照片到 {id}/photo_1.xxx，再传 JSON 到 {id}.json
+ * 返回已上传照片的完整 URL 列表，方便后续同步到后端服务。
  */
 export async function uploadMemorial(
   id: string,
   payload: Omit<MemorialData, 'photoUrls'> & { photoFiles?: File[] },
-): Promise<void> {
+): Promise<string[]> {
   const client = getClient();
   const photoUrls: string[] = [];
   const { publicBaseUrl, bucket, region } = ossConfig;
@@ -62,4 +63,5 @@ export async function uploadMemorial(
   await client.put(jsonName, new Blob([JSON.stringify(jsonPayload)], { type: 'application/json' }), {
     headers: { 'Content-Type': 'application/json' },
   });
+  return photoUrls;
 }

@@ -5,6 +5,7 @@ import { MemorialCard } from './MemorialCard';
 import { RichTextEditor } from './RichTextEditor';
 import { ossConfig } from './ossConfig';
 import { uploadMemorial } from './ossUpload';
+import { createDeceased } from './api';
 import type { MemorialCardData } from './types';
 
 interface MemorialEditorProps {
@@ -68,7 +69,7 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
         const file = f.originFileObj ?? (f as unknown as File);
         if (file && file instanceof File) photoFiles.push(file);
       }
-      await uploadMemorial(id, {
+      const photoUrls = await uploadMemorial(id, {
         name: formValues.name,
         gender: formValues.gender,
         birthDate: toTimestamp(formValues.birthDate),
@@ -76,8 +77,28 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
         biography: bioHtml ?? '',
         photoFiles,
       });
+      const birthDateStr: string | undefined =
+        (formValues.birthDate && formValues.birthDate.format?.('YYYY-MM-DD')) ||
+        (toTimestamp(formValues.birthDate)
+          ? new Date(toTimestamp(formValues.birthDate)!).toISOString().slice(0, 10)
+          : undefined);
+      const deathDateStr: string | undefined =
+        (formValues.deathDate && formValues.deathDate.format?.('YYYY-MM-DD')) ||
+        (toTimestamp(formValues.deathDate)
+          ? new Date(toTimestamp(formValues.deathDate)!).toISOString().slice(0, 10)
+          : undefined);
+
+      const created = await createDeceased({
+        full_name: formValues.name,
+        gender: formValues.gender,
+        birth_date: birthDateStr,
+        death_date: deathDateStr,
+        biography: bioHtml ?? '',
+        photos: photoUrls,
+      });
       message.success('纪念页已生成');
-      onGenerate(id);
+      // 预览逻辑改为使用后端返回的 qr_code_id
+      onGenerate(created.qr_code_id);
     } catch (e) {
       console.error('OSS 上传失败', e);
       message.error(e instanceof Error ? e.message : '上传失败，请检查 OSS 配置与网络');

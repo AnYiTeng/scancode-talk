@@ -4,8 +4,8 @@ import type { TabsProps } from 'antd';
 import dayjs from 'dayjs';
 import { MemorialCard } from './MemorialCard';
 import { MemorialChatModal } from './MemorialChatModal';
-import { ossConfig } from './ossConfig';
 import type { MemorialData, MemorialCardData } from './types';
+import { getDeceased } from './api';
 
 interface MemorialPreviewProps {
   id: string;
@@ -17,34 +17,39 @@ export const MemorialPreview: React.FC<MemorialPreviewProps> = ({ id }) => {
   const [error, setError] = useState<string | null>(null);
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
-  const previewUrl =
-    window.location.origin +
-    window.location.pathname +
-    '#/preview?id=' +
-    encodeURIComponent(id);
-
   useEffect(() => {
     let cancelled = false;
 
     const load = async () => {
-      const baseUrl = ossConfig.publicBaseUrl;
-      if (baseUrl) {
-        try {
-          const url = `${baseUrl.replace(/\/$/, '')}/${encodeURIComponent(id)}.json`;
-          const res = await fetch(url);
-          if (res.ok) {
-            const parsed = (await res.json()) as MemorialData;
-            if (!cancelled) setData(parsed);
-          } else if (!cancelled) {
-            setError('未找到该纪念页数据');
-          }
-        } catch {
-          if (!cancelled) setError('未找到该纪念页数据');
+      try {
+        const detail = await getDeceased(id);
+        if (cancelled) return;
+
+        const birthDate =
+          detail.birth_date != null ? new Date(detail.birth_date).getTime() : undefined;
+        const deathDate =
+          detail.death_date != null ? new Date(detail.death_date).getTime() : undefined;
+
+        const mapped: MemorialData = {
+          name: detail.full_name || undefined,
+          gender:
+            detail.gender === 'male' || detail.gender === 'female' ? detail.gender : undefined,
+          birthDate,
+          deathDate,
+          biography: detail.biography ?? undefined,
+          photoUrls: Array.isArray(detail.photos) ? detail.photos : [],
+        };
+
+        setData(mapped);
+        setError(null);
+      } catch (e) {
+        console.error(e);
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : '未找到该纪念页数据');
         }
-      } else {
-        if (!cancelled) setError('未找到该纪念页数据');
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      if (!cancelled) setLoading(false);
     };
 
     load();
