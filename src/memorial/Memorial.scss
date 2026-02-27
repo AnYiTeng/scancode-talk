@@ -23,6 +23,21 @@
   font-family: var(--font-serif);
 }
 
+/* 预览态下的纪念页：采用更庄重的深色 + 金色主题，并保留变量体系 */
+.memorial-page--preview {
+  --color-bg: #050712;
+  --color-card: rgba(10, 12, 20, 0.96);
+  --color-text: #f5f0e8;
+  --color-muted: #9ca0b0;
+  --color-border: rgba(255, 255, 255, 0.18);
+  --color-accent: #d9b36c;
+
+  background:
+    radial-gradient(circle at 0% 0%, rgba(217, 179, 108, 0.08), transparent 55%),
+    radial-gradient(circle at 100% 100%, rgba(90, 139, 189, 0.12), transparent 55%),
+    #050712;
+}
+
 /* 纪念页生成器 - 变量与布局 */
 .memorial-loading {
   display: flex;
@@ -269,8 +284,8 @@
 
 /* 预览页（纪念页 + 二维码） */
 .memorial-preview-page {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 880px;
+  margin: 4px auto;
   padding: 24px;
   padding-right: 200px;
   padding-left: calc(24px + var(--safe-left));
@@ -278,6 +293,220 @@
   min-height: 100vh;
   background: var(--color-card, #fffefb);
   position: relative;
+  border-radius: 20px;
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--color-border, #e0ddd6);
+
+  &__tabs {
+    margin-top: 32px;
+
+    .ant-tabs-nav {
+      margin-bottom: 16px;
+    }
+
+    .ant-tabs-tab {
+      padding: 8px 16px;
+      font-size: 14px;
+    }
+
+    .ant-tabs-tab-btn {
+      color: var(--color-muted, #6b6b6b);
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+      color: var(--color-text, #3d3d3d);
+      font-weight: 600;
+    }
+
+    .ant-tabs-ink-bar {
+      background: var(--color-accent, #7a9eb8);
+    }
+
+    .ant-tabs-content-holder {
+      overflow: visible;
+    }
+
+    .ant-tabs-tabpane {
+      animation: memorial-tab-fade 0.35s ease;
+      animation-fill-mode: both;
+    }
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.16);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-muted, #6b6b6b);
+    margin-bottom: 10px;
+  }
+
+  &__title {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--color-text, #3d3d3d);
+    margin: 0 0 6px 0;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-muted, #6b6b6b);
+  }
+
+  &__subtitle--secondary {
+    margin-top: 4px;
+    font-size: 12px;
+    opacity: 0.9;
+  }
+
+  &__tab-content {
+    padding-top: 8px;
+  }
+
+  &__tab-content--story {
+    max-height: 460px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  &__hero {
+    display: flex;
+    gap: 20px;
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  &__hero-main {
+    flex: 0 0 220px;
+    max-width: 260px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.18), transparent 60%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    .memorial-preview-page__hero-media {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+  }
+
+  &__hero-info {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  &__hero-name {
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+  }
+
+  &__hero-dates {
+    font-size: 14px;
+    color: var(--color-muted, #6b6b6b);
+  }
+
+  &__hero-quote {
+    margin-top: 6px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--color-text, #3d3d3d);
+    opacity: 0.9;
+  }
+
+  &__hero-thumbs {
+    margin-top: 16px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  &__hero-thumb {
+    position: relative;
+    border: none;
+    padding: 0;
+    background: transparent;
+    cursor: pointer;
+    flex: 0 0 80px;
+    height: 64px;
+    border-radius: 10px;
+    overflow: hidden;
+    opacity: 0.75;
+    transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 1px solid transparent;
+
+    img,
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    &:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    }
+  }
+
+  &__hero-thumb--active {
+    opacity: 1;
+    border-color: var(--color-accent, #7a9eb8);
+    box-shadow: 0 0 0 1px rgba(217, 179, 108, 0.6);
+  }
+
+  &__hero-thumb-badge {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.65);
+    color: #f5f0e8;
+    font-size: 10px;
+    line-height: 1.6;
+  }
+
+  &__empty {
+    font-size: 14px;
+    color: var(--color-muted, #6b6b6b);
+    text-align: center;
+    padding: 32px 12px;
+  }
+
+  &__story {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-text, #3d3d3d);
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+  }
 
   @media (max-width: 768px) {
     padding-right: 24px;
@@ -295,6 +524,28 @@
       max-width: 220px;
       margin-left: auto;
       margin-right: auto;
+    }
+
+    &__hero {
+      flex-direction: column;
+    }
+
+    &__hero-main {
+      max-width: 220px;
+      margin: 0 auto;
+    }
+
+    &__hero-name {
+      font-size: 20px;
+      text-align: center;
+    }
+
+    &__hero-dates {
+      text-align: center;
+    }
+
+    &__hero-quote {
+      text-align: left;
     }
   }
 
@@ -323,7 +574,7 @@
     text-align: center;
     color: var(--color-muted, #6b6b6b);
     font-size: 14px;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 
   @media (max-width: 480px) {
@@ -370,6 +621,16 @@
     min-height: 40px;
   }
 
+  .qr-area .copy-link-btn {
+    margin-top: 6px;
+    width: 100%;
+    padding: 0;
+    height: auto;
+    line-height: 1.5;
+    font-size: 13px;
+    color: var(--color-accent, #7a9eb8);
+  }
+
   @media (max-width: 600px) {
     .qr-area {
       position: static;
@@ -387,5 +648,21 @@
     .qr-area__canvas-wrap {
       max-width: 180px;
     }
+
+    &__tabs {
+      margin-top: 24px;
+    }
+  }
+}
+
+@keyframes memorial-tab-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

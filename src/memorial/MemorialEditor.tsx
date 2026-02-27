@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, DatePicker, Button, Upload, message } from 'antd';
+import { Form, Input, DatePicker, Button, Upload, message, Radio } from 'antd';
 import type { UploadFile } from 'antd';
 import { MemorialCard } from './MemorialCard';
 import { RichTextEditor } from './RichTextEditor';
@@ -35,10 +35,16 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
   const values = Form.useWatch([], form) ?? {};
   const previewData: MemorialCardData = {
     name: values.name,
+    gender: values.gender,
     birthDate: values.birthDate?.valueOf?.() ?? values.birthDate,
     deathDate: values.deathDate?.valueOf?.() ?? values.deathDate,
     biography: bioHtml,
+    // 预览区仅展示图片，避免视频在卡片中以图片方式渲染异常
     photoList: fileList
+      .filter((f) => {
+        const file = f.originFileObj as File | undefined;
+        return !file || file.type.startsWith('image/');
+      })
       .map((f) => f.thumbUrl ?? f.url ?? (f.originFileObj && URL.createObjectURL(f.originFileObj)))
       .filter(Boolean) as string[],
   };
@@ -64,6 +70,7 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
       }
       await uploadMemorial(id, {
         name: formValues.name,
+        gender: formValues.gender,
         birthDate: toTimestamp(formValues.birthDate),
         deathDate: toTimestamp(formValues.deathDate),
         biography: bioHtml ?? '',
@@ -92,6 +99,12 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
           >
             <Input placeholder="请输入姓名" />
           </Form.Item>
+          <Form.Item name="gender" label="性别">
+            <Radio.Group>
+              <Radio value="male">男</Radio>
+              <Radio value="female">女</Radio>
+            </Radio.Group>
+          </Form.Item>
           <Form.Item name="birthDate" label="出生日期">
             <DatePicker style={{ width: '100%' }} placeholder="选择出生日期" />
           </Form.Item>
@@ -103,7 +116,7 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
           </Form.Item>
           <Form.Item
             name="photos"
-            label="照片（使用下方按钮调整顺序）"
+            label="照片 / 视频（使用下方按钮调整顺序）"
             valuePropName="fileList"
             getValueFromEvent={normFile}
           >
@@ -112,7 +125,7 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
               fileList={fileList}
               onChange={({ fileList: fl }) => setFileList(fl)}
               beforeUpload={() => false}
-              accept="image/*"
+              accept="image/*,video/*"
               multiple
             >
               {fileList.length >= 9 ? null : '+ 上传'}

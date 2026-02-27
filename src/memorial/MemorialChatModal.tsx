@@ -23,6 +23,8 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
   const listRef = useRef<HTMLDivElement>(null);
   const systemPrompt = buildSystemPrompt(memorialData);
 
+  const pronoun = memorialData.gender === 'male' ? '他' : memorialData.gender === 'female' ? '她' : 'TA';
+
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTop = listRef.current.scrollHeight;
@@ -63,15 +65,15 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
   };
 
   return (
-    <section className="memorial-chat-modal" aria-label={`与${memorialData.name ?? 'TA'}对话`}>
+    <section className="memorial-chat-modal" aria-label={`与${memorialData.name ?? pronoun}对话`}>
       <h3 className="memorial-chat-modal__title">
-        与{memorialData.name ?? 'TA'}对话
+        与{memorialData.name ?? pronoun}对话
       </h3>
       <div className="memorial-chat-modal__body">
         <div className="memorial-chat-modal__messages" ref={listRef}>
           {messages.length === 0 && (
             <div className="memorial-chat-modal__placeholder">
-              在这里向 TA 说说心里话，TA 会以第一人称温和地回应你。
+              在这里向 {pronoun} 说说心里话，{pronoun} 会以第一人称温和地回应你。
             </div>
           )}
           {messages.map((m, i) => (
@@ -80,7 +82,7 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
               className={`memorial-chat-modal__msg memorial-chat-modal__msg--${m.role}`}
             >
               <span className="memorial-chat-modal__msg-role">
-                {m.role === 'user' ? '我' : memorialData.name ?? 'TA'}
+                {m.role === 'user' ? '我' : memorialData.name ?? pronoun}
               </span>
               <div className="memorial-chat-modal__msg-content">{m.content}</div>
             </div>
@@ -88,7 +90,7 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
           {(loading || streamingContent) && (
             <div className="memorial-chat-modal__msg memorial-chat-modal__msg--assistant">
               <span className="memorial-chat-modal__msg-role">
-                {memorialData.name ?? 'TA'}
+                {memorialData.name ?? pronoun}
               </span>
               <div className="memorial-chat-modal__msg-content memorial-chat-modal__msg-content--streaming">
                 {streamingContent || '正在回复…'}
@@ -109,7 +111,7 @@ export const MemorialChatModal: React.FC<MemorialChatModalProps> = ({
                 handleSend();
               }
             }}
-            placeholder="输入想对 TA 说的话…"
+            placeholder={`输入想对${memorialData.name ?? pronoun}说的话…`}
             autoSize={{ minRows: 2, maxRows: 4 }}
             disabled={loading}
             className="memorial-chat-modal__input"

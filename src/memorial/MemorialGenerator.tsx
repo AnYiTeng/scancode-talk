@@ -33,7 +33,7 @@ export const MemorialGenerator: React.FC = () => {
     const id = getQueryId();
     if (id) {
       return (
-        <div className="memorial-page">
+        <div className="memorial-page memorial-page--preview">
           <MemorialPreview id={id} />
         </div>
       );

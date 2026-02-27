@@ -52,6 +52,7 @@ export async function uploadMemorial(
 
   const jsonPayload: MemorialData = {
     name: payload.name,
+    gender: payload.gender,
     birthDate: payload.birthDate,
     deathDate: payload.deathDate,
     biography: payload.biography,
