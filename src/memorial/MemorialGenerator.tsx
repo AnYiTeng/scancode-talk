@@ -18,6 +18,14 @@ export const MemorialGenerator: React.FC = () => {
     setHash('/preview', 'id=' + encodeURIComponent(id));
   };
 
+  useEffect(() => {
+    if (!ready) return;
+    // 根路径统一到表单页路由
+    if (path.path === '/' || path.path === '') {
+      setHash('/create');
+    }
+  }, [ready, path.path, setHash]);
+
   if (!ready) {
     return (
       <div className="memorial-page">
@@ -29,6 +37,7 @@ export const MemorialGenerator: React.FC = () => {
     );
   }
 
+  // 预览页：/preview?id=xxx
   if (path.path === '/preview') {
     const id = getQueryId();
     if (id) {
@@ -40,11 +49,16 @@ export const MemorialGenerator: React.FC = () => {
     }
   }
 
-  return (
-    <div className="memorial-page">
-      <MemorialEditor onGenerate={handleGenerate} />
-    </div>
-  );
+  // 表单页：/create（根路径 / 会重定向到 /create）
+  if (path.path === '/create' || path.path === '/' || path.path === '') {
+    return (
+      <div className="memorial-page">
+        <MemorialEditor onGenerate={handleGenerate} />
+      </div>
+    );
+  }
+
+  return null;
 };
 
 /** 带 ConfigProvider 的纪念页生成器入口，可直接挂到根 */
