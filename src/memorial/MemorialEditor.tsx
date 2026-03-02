@@ -145,6 +145,8 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
                 {formatDateForDisplay(values.birthDate) || '选择出生日期'}
               </Button>
               <MobileDatePicker
+                min={ new Date(1900, 0, 1)}
+                max={ new Date()}
                 precision="day"
                 visible={birthPickerVisible}
                 onClose={() => setBirthPickerVisible(false)}
@@ -162,6 +164,8 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
                 {formatDateForDisplay(values.deathDate) || '选择逝世日期'}
               </Button>
               <MobileDatePicker
+                min={ new Date(1900, 0, 1)}
+                max={ new Date()}
                 precision="day"
                 visible={deathPickerVisible}
                 onClose={() => setDeathPickerVisible(false)}
