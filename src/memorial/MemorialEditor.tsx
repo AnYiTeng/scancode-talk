@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Form, Input, DatePicker, Button, Upload, message, Radio } from 'antd';
+import { Form, Input, Button, Upload, message, Radio } from 'antd';
+import { DatePicker as MobileDatePicker } from 'antd-mobile';
 import type { UploadFile } from 'antd';
 import { MemorialCard } from './MemorialCard';
 import { RichTextEditor } from './RichTextEditor';
@@ -27,11 +28,23 @@ function toTimestamp(v: unknown): number | undefined {
   return undefined;
 }
 
+function formatDateForDisplay(v: unknown): string {
+  const ts = toTimestamp(v);
+  if (!ts) return '';
+  const d = new Date(ts);
+  const y = d.getFullYear();
+  const m = `${d.getMonth() + 1}`.padStart(2, '0');
+  const day = `${d.getDate()}`.padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
 export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) => {
   const [form] = Form.useForm();
   const [bioHtml, setBioHtml] = useState('');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [birthPickerVisible, setBirthPickerVisible] = useState(false);
+  const [deathPickerVisible, setDeathPickerVisible] = useState(false);
 
   const values = Form.useWatch([], form) ?? {};
   const previewData: MemorialCardData = {
@@ -127,10 +140,38 @@ export const MemorialEditor: React.FC<MemorialEditorProps> = ({ onGenerate }) =>
             </Radio.Group>
           </Form.Item>
           <Form.Item name="birthDate" label="出生日期">
-            <DatePicker style={{ width: '100%' }} placeholder="选择出生日期" />
+            <>
+              <Button block onClick={() => setBirthPickerVisible(true)}>
+                {formatDateForDisplay(values.birthDate) || '选择出生日期'}
+              </Button>
+              <MobileDatePicker
+                precision="day"
+                visible={birthPickerVisible}
+                onClose={() => setBirthPickerVisible(false)}
+                value={values.birthDate}
+                onConfirm={(val: Date) => {
+                  setBirthPickerVisible(false);
+                  form.setFieldsValue({ birthDate: val });
+                }}
+              />
+            </>
           </Form.Item>
           <Form.Item name="deathDate" label="逝世日期">
-            <DatePicker style={{ width: '100%' }} placeholder="选择逝世日期" />
+            <>
+              <Button block onClick={() => setDeathPickerVisible(true)}>
+                {formatDateForDisplay(values.deathDate) || '选择逝世日期'}
+              </Button>
+              <MobileDatePicker
+                precision="day"
+                visible={deathPickerVisible}
+                onClose={() => setDeathPickerVisible(false)}
+                value={values.deathDate}
+                onConfirm={(val: Date) => {
+                  setDeathPickerVisible(false);
+                  form.setFieldsValue({ deathDate: val });
+                }}
+              />
+            </>
           </Form.Item>
           <Form.Item label="生平介绍">
             <RichTextEditor value={bioHtml} onChange={setBioHtml} />

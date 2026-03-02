@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "ali-oss": "^6.23.0",
     "antd": "^6.3.0",
+    "antd-mobile": "^5.42.3",
     "dayjs": "^1.11.10",
     "qrcode.react": "^4.1.0",
     "quill": "^2.0.2",
